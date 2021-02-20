@@ -7,7 +7,7 @@ function App() {
     <div className="App">
       <button>Discourse Thread</button>
       <button>Discourse Graph</button>
-      <DiscourceGraph/>
+      <DiscourceGraph />
     </div>
   );
 }
