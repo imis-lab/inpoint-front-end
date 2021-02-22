@@ -11,33 +11,104 @@ class DiscourceGraph extends Component {
   }
 
   render() {
+    // FIXME: Retrieve elements from back-end.
     const elements = [
-      { data: { id: "one", label: "issue" } },
-      { data: { id: "two", label: "solution1" } },
-      { data: { id: "three", label: "solution2" } },
+      { data: { id: "one", label: "issue", type: "issue" } },
+      { data: { id: "two", label: "solution1", type: "solution" } },
+      { data: { id: "three", label: "solution2", type: "solution" } },
       {
         data: {
-          source: "one",
-          target: "two",
+          source: "two",
+          target: "one",
           label: "edge",
+          type: "neutral",
         },
       },
       {
         data: {
-          source: "one",
-          target: "three",
+          source: "three",
+          target: "one",
           label: "edge",
+          type: "neutral",
         },
       },
     ];
 
-    const layout = { name: "dagre", rankDir: "TB" };
+    // FIXME: Retrieve stylesheet from back-end.
+    const stylesheet = [
+      {
+        selector: "node",
+        css: {
+          content: "data(label)",
+          "font-size": "12pt",
+        },
+      },
+      {
+        selector: "edge",
+        css: {
+          width: 3,
+          "curve-style": "bezier",
+          "target-arrow-shape": "triangle",
+        },
+      },
+      {
+        selector: 'edge[type="neutral"]',
+        style: {
+          "line-color": "gray",
+          "target-arrow-color": "gray",
+        },
+      },
+      {
+        selector: 'edge[type="neutral-note"]',
+        style: {
+          "line-color": "gray",
+          "line-style": "dashed",
+          "target-arrow-color": "gray",
+        },
+      },
+      {
+        selector: 'node[type="solution"]',
+        style: {
+          "background-color": "yellow",
+        },
+      },
+      {
+        selector: 'node[type="issue"]',
+        style: {
+          "background-color": "blue",
+        },
+      },
+      {
+        selector: 'node[type="note"]',
+        style: {
+          "background-color": "gray",
+        },
+      },
+      {
+        selector: 'node[type="position-in-favor"]',
+        style: {
+          "background-color": "green",
+        },
+      },
+      {
+        selector: 'node[type="position-against"]',
+        style: {
+          "background-color": "red",
+        },
+      },
+    ];
+
+    const layout = { name: "dagre", rankDir: "BT" };
+    const style = { width: "1770px", height: "600px", borderStyle: "solid" };
 
     return (
       <CytoscapeComponent
         elements={elements}
-        style={{ width: "1770px", height: "600px", borderStyle: "solid" }}
+        style={style}
         layout={layout}
+        boxSelectionEnabled={false}
+        autounselectify={true}
+        stylesheet={stylesheet}
       />
     );
   }
