@@ -3809,6 +3809,11 @@ cyclist@^1.0.1:
   resolved "https://registry.yarnpkg.com/cyclist/-/cyclist-1.0.1.tgz#596e9698fd0c80e12038c2b82d6eb1b35b6224d9"
   integrity sha1-WW6WmP0MgOEgOMK4LW6xs1tiJNk=
 
+cytoscape-cxtmenu@^3.3.1:
+  version "3.3.1"
+  resolved "https://registry.yarnpkg.com/cytoscape-cxtmenu/-/cytoscape-cxtmenu-3.3.1.tgz#36a3655ec838c5ab88ba36832c7dbe92b89ad97c"
+  integrity sha512-GiT8v0v8VzwiemkT7EackZWSZFmEx1UceNSTy39+JJ84r5eptt8yTbvh/0+FqPjL6yMQsymh4ZbS8nGBSaj/NA==
+
 cytoscape-dagre@^2.3.2:
   version "2.3.2"
   resolved "https://registry.yarnpkg.com/cytoscape-dagre/-/cytoscape-dagre-2.3.2.tgz#f83d4357642c86d3bd7530dd9c1dffc2e1079d3c"

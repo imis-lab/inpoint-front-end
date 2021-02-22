@@ -1,13 +1,86 @@
 import cytoscape from "cytoscape";
+import cxtmenu from "cytoscape-cxtmenu";
 import dagre from "cytoscape-dagre";
 import React, { Component } from "react";
 import CytoscapeComponent from "react-cytoscapejs";
 
 cytoscape.use(dagre);
+cytoscape.use(cxtmenu);
 
 class DiscourceGraph extends Component {
   constructor(props) {
     super(props);
+  }
+
+  componentDidMount() {
+    // FIXME: Find a better place to initialize the cxt menu.
+    this.cy.cxtmenu({
+      selector: "node, edge",
+      commands: [
+        {
+          content: "Edit",
+          select: function (ele) {
+            console.log("Edit");
+          },
+        },
+        {
+          content: "Like",
+          select: function (ele) {
+            console.log("Like");
+          },
+          enabled: true,
+        },
+        {
+          content: "Dislike",
+          select: function (ele) {
+            console.log("Dislike");
+          },
+          enabled: true,
+        },
+        {
+          content: "Remove",
+          select: function (ele) {
+            console.log("Remove");
+          },
+        },
+      ],
+    });
+
+    this.cy.cxtmenu({
+      selector: "core",
+      commands: [
+        {
+          content: "New Issue",
+          select: function (event) {
+            console.log("New Issue");
+          },
+        },
+        {
+          content: "New Note",
+          select: function () {
+            console.log("New Note");
+          },
+        },
+        {
+          content: "New Solution",
+          select: function () {
+            console.log("New Solution");
+          },
+        },
+        {
+          content: "New Position In Favor",
+          select: function () {
+            console.log("New Position In Favor");
+          },
+        },
+        {
+          content: "New Position Against",
+          select: function () {
+            console.log("New Position Against");
+          },
+        },
+      ],
+    });
   }
 
   render() {
@@ -109,6 +182,7 @@ class DiscourceGraph extends Component {
         boxSelectionEnabled={false}
         autounselectify={true}
         stylesheet={stylesheet}
+        cy={(cy) => (this.cy = cy)}
       />
     );
   }
