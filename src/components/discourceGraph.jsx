@@ -81,6 +81,16 @@ class DiscourceGraph extends Component {
         },
       ],
     });
+
+    // TODO: Implement the functionality.
+    this.cy.on("mouseover", "node", (event) => {
+      console.log("Open react-tooltip here.");
+    });
+
+    // TODO: Implement the functionality.
+    this.cy.on("mouseout", "node", (event) => {
+      console.log("Close react-tooltip here.");
+    });
   }
 
   render() {
