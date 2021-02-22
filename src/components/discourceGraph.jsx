@@ -1,5 +1,9 @@
+import cytoscape from "cytoscape";
+import dagre from "cytoscape-dagre";
 import React, { Component } from "react";
 import CytoscapeComponent from "react-cytoscapejs";
+
+cytoscape.use(dagre);
 
 class DiscourceGraph extends Component {
   constructor(props) {
@@ -8,21 +12,32 @@ class DiscourceGraph extends Component {
 
   render() {
     const elements = [
-      { data: { id: "one", label: "Node 1" }, position: { x: 0, y: 0 } },
-      { data: { id: "two", label: "Node 2" }, position: { x: 100, y: 0 } },
+      { data: { id: "one", label: "issue" } },
+      { data: { id: "two", label: "solution1" } },
+      { data: { id: "three", label: "solution2" } },
       {
         data: {
           source: "one",
           target: "two",
-          label: "Edge from Node1 to Node2",
+          label: "edge",
+        },
+      },
+      {
+        data: {
+          source: "one",
+          target: "three",
+          label: "edge",
         },
       },
     ];
 
+    const layout = { name: "dagre", rankDir: "TB" };
+
     return (
       <CytoscapeComponent
         elements={elements}
-        style={{ width: "1500px", height: "600px" }}
+        style={{ width: "1770px", height: "600px", borderStyle: "solid" }}
+        layout={layout}
       />
     );
   }
