@@ -14,7 +14,7 @@ cytoscape.use(dagre);
 cytoscape.use(cxtmenu);
 
 const DiscourceGraph = () => {
-  const cy = useRef(null);
+  const cyRef = useRef(null);
   const [elements, setElements] = useState([
     {
       group: "nodes",
@@ -146,7 +146,8 @@ const DiscourceGraph = () => {
   });
 
   useEffect(() => {
-    cy.current.cxtmenu({
+    const cy = cyRef.current;
+    cy.cxtmenu({
       selector: "node, edge",
       commands: [
         {
@@ -173,13 +174,13 @@ const DiscourceGraph = () => {
           content: "Remove",
           select: function (ele) {
             // console.log("Remove");
-            cy.current.remove(ele);
+            cy.remove(ele);
           },
         },
       ],
     });
 
-    cy.current.cxtmenu({
+    cy.cxtmenu({
       selector: "core",
       commands: [
         {
@@ -217,7 +218,7 @@ const DiscourceGraph = () => {
     });
 
     let tippyDiv;
-    cy.current.on("mouseover", "node", (event) => {
+    cy.on("mouseover", "node", (event) => {
 
       let node = event.target;
       console.log(node);
@@ -288,26 +289,26 @@ const DiscourceGraph = () => {
       tippyDiv.show();
     });
 
-    cy.current.on("mouseout", "node", (event) => {
+    cy.on("mouseout", "node", (event) => {
       tippyDiv.hide();
     });
-  }, [cy, elements, layout, style]);
+  }, [cyRef, elements, layout, style]);
 
   const getID = () => {
     return "_" + Math.random().toString(36).substr(2, 9);
   };
   const saveGraph = () => {
-    const x = cy.current.json();
+    const x = cyRef.json();
     // console.log(x.elements);
     // console.log(elements)
     // setElements([...elements, x.elements.nodes[0]])
     // x.elements.nodes.forEach(node => setElements([...elements, node]))
-    let layout = cy.current.layout({ name: "dagre", rankDir: "BT" });
+    let layout = cyRef.layout({ name: "dagre", rankDir: "BT" });
     layout.run();
   };
 
   const addNode = (id, text, label, type, author, source, target) => {
-    cy.current.add([
+    cyRef.add([
       {
         data: {
           id: id,
@@ -370,8 +371,8 @@ const DiscourceGraph = () => {
         data: { id: "parent2", label: "issue 2", type: "issue" },
       },
     ];
-    cy.current.add(newIssue);
-    let layout = cy.current.layout({ name: "dagre", rankDir: "BT" });
+    cyRef.add(newIssue);
+    let layout = cyRef.layout({ name: "dagre", rankDir: "BT" });
     layout.run();
   };
 
@@ -384,7 +385,7 @@ const DiscourceGraph = () => {
         boxSelectionEnabled={false}
         autounselectify={true}
         stylesheet={stylesheet}
-        cy={(ref) => (cy.current = ref)}
+        cy={(cy) => (cyRef.current = cy)}
       />
       {elements.map((ele, idx) => (
         <div key={idx}>{ele.data.id}</div>
