@@ -8,6 +8,7 @@ import popper from "cytoscape-popper";
 // import Tippy from "@tippyjs/react";
 import tippy from "tippy.js";
 import "tippy.js/dist/tippy.css"; // optional
+import PopUpModal from "./PopUpModal";
 
 cytoscape.use(popper);
 cytoscape.use(dagre);
@@ -144,16 +145,21 @@ const DiscourceGraph = () => {
     height: "600px",
     borderStyle: "solid",
   });
+  const [modalInfo, setModalInfo] = useState({ status: false, node: {} });
 
   useEffect(() => {
     const cy = cyRef.current;
     cy.cxtmenu({
-      selector: "node, edge",
+      selector: "node",
       commands: [
         {
           content: "Edit",
-          select: function (ele) {
-            // console.log("Edit");
+          select: (node) => {
+            console.log(node.data().id);
+            console.log(node.data());
+            console.log(node);
+            console.log("================");
+            setModalInfo({ status: true, node: node.data() });
           },
         },
         {
@@ -172,9 +178,9 @@ const DiscourceGraph = () => {
         },
         {
           content: "Remove",
-          select: function (ele) {
-            // console.log("Remove");
-            cy.remove(ele);
+          select: function (node) {
+            cy.remove(node);
+            // saveGraph();
           },
         },
       ],
@@ -191,7 +197,7 @@ const DiscourceGraph = () => {
         },
         {
           content: "New Solution",
-          select: (x) => {
+          select: () => {
             addSolutionNode();
             saveGraph();
           },
@@ -219,10 +225,7 @@ const DiscourceGraph = () => {
 
     let tippyDiv;
     cy.on("mouseover", "node", (event) => {
-
       let node = event.target;
-      console.log(node);
-      console.log(elements);
       // used only for positioning
       let ref = node.popperRef();
       let dummyDomEle = document.createElement("div");
@@ -232,55 +235,10 @@ const DiscourceGraph = () => {
         // tippy props:
         getReferenceClientRect: ref.getBoundingClientRect,
         trigger: "manual",
-        content: () => {
-          let div = document.createElement("div");
-          let authorDiv = document.createElement("div");
-          let dateDiv = document.createElement("div");
-          let dislikesDiv = document.createElement("div");
-          let idDiv = document.createElement("div");
-          let labelDiv = document.createElement("div");
-          let likesDiv = document.createElement("div");
-          let textDiv = document.createElement("div");
-          let typeDiv = document.createElement("div");
-          // const data = node._private.data;
-
-          // const convertedElements = _.keys(data).map((dataKey) => ({
-          //   elementNameProperty: dataKey,
-          //   elementValueProperty: data[dataKey],
-          // }));
-          // console.log(convertedElements);
-          const {
-            author,
-            date,
-            dislikes,
-            id,
-            label,
-            likes,
-            text,
-            type,
-          } = node._private.data;
-
-          authorDiv.textContent = author;
-          dateDiv.textContent = date;
-          dislikesDiv.textContent = dislikes;
-          idDiv.textContent = id;
-          labelDiv.textContent = label;
-          likesDiv.textContent = likes;
-          textDiv.textContent = text;
-          typeDiv.textContent = type;
-          div.appendChild(authorDiv);
-          div.appendChild(dateDiv);
-          div.appendChild(dislikesDiv);
-          div.appendChild(idDiv);
-          div.appendChild(labelDiv);
-          div.appendChild(likesDiv);
-          div.appendChild(textDiv);
-          div.appendChild(typeDiv);
-          return div;
-        },
+        content: () => createContent(node),
         arrow: true,
         placement: "bottom",
-        hideOnClick: false,
+        hideOnClick: true,
         multiple: true,
         sticky: true,
         theme: "tomato",
@@ -297,18 +255,21 @@ const DiscourceGraph = () => {
   const getID = () => {
     return "_" + Math.random().toString(36).substr(2, 9);
   };
+
   const saveGraph = () => {
-    const x = cyRef.json();
+    // const x = cyRef.current.json();
     // console.log(x.elements);
     // console.log(elements)
     // setElements([...elements, x.elements.nodes[0]])
     // x.elements.nodes.forEach(node => setElements([...elements, node]))
-    let layout = cyRef.layout({ name: "dagre", rankDir: "BT" });
+
+    // positioning new solution
+    let layout = cyRef.current.layout({ name: "dagre", rankDir: "BT" });
     layout.run();
   };
 
   const addNode = (id, text, label, type, author, source, target) => {
-    cyRef.add([
+    cyRef.current.add([
       {
         data: {
           id: id,
@@ -371,9 +332,77 @@ const DiscourceGraph = () => {
         data: { id: "parent2", label: "issue 2", type: "issue" },
       },
     ];
-    cyRef.add(newIssue);
-    let layout = cyRef.layout({ name: "dagre", rankDir: "BT" });
+    cyRef.current.add(newIssue);
+    let layout = cyRef.current.layout({ name: "dagre", rankDir: "BT" });
     layout.run();
+  };
+
+  const createContent = (node) => {
+    let div = document.createElement("div");
+    let authorDiv = document.createElement("div");
+    let dateDiv = document.createElement("div");
+    let dislikesDiv = document.createElement("div");
+    let idDiv = document.createElement("div");
+    let labelDiv = document.createElement("div");
+    let likesDiv = document.createElement("div");
+    let textDiv = document.createElement("div");
+    let typeDiv = document.createElement("div");
+    // const data = node.data();
+
+    // const convertedElements = _.keys(data).map((dataKey) => ({
+    //   elementNameProperty: dataKey,
+    //   elementValueProperty: data[dataKey],
+    // }));
+    // console.log(convertedElements);
+    const {
+      author,
+      date,
+      dislikes,
+      id,
+      label,
+      likes,
+      text,
+      type,
+    } = node.data();
+
+    authorDiv.textContent = `Author: ${author}`;
+    dateDiv.textContent = `Date: ${date}`;
+    dislikesDiv.textContent = `Dislikes: ${dislikes}`;
+    idDiv.textContent = `ID: ${id}`;
+    labelDiv.textContent = `Label: ${label}`;
+    likesDiv.textContent = `Likes: ${likes}`;
+    textDiv.textContent = `Text: ${text}`;
+    typeDiv.textContent = `Type: ${type}`;
+    // div.appendChild(authorDiv);
+    // div.appendChild(dateDiv);
+    // div.appendChild(dislikesDiv);
+    // div.appendChild(idDiv);
+    // div.appendChild(labelDiv);
+    // div.appendChild(likesDiv);
+    // div.appendChild(textDiv);
+    // div.appendChild(typeDiv);
+    div.append(
+      authorDiv,
+      dateDiv,
+      dislikesDiv,
+      idDiv,
+      labelDiv,
+      likesDiv,
+      textDiv,
+      typeDiv
+    );
+    return div;
+  };
+
+  const closeModal = (node) => {
+    setModalInfo({ status: false, node: {} });
+
+    // let temp = cyRef.current.filter('node[id="' + node.id + '"]');
+    // temp.data("label", node.label);
+    
+    cyRef.current.filter('node[id="' + node.id + '"]').data({label: node.label, text: node.text});
+    
+    // saveGraph();
   };
 
   return (
@@ -390,6 +419,11 @@ const DiscourceGraph = () => {
       {elements.map((ele, idx) => (
         <div key={idx}>{ele.data.id}</div>
       ))}
+      <PopUpModal
+        modalInfo={modalInfo.status}
+        closeModal={closeModal}
+        node={modalInfo.node}
+      />
     </div>
   );
 };
