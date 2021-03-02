@@ -1,20 +1,25 @@
 import cytoscape from "cytoscape";
 import cxtmenu from "cytoscape-cxtmenu";
 import dagre from "cytoscape-dagre";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, forwardRef, useCallback } from "react";
 import CytoscapeComponent from "react-cytoscapejs";
 import _ from "lodash";
 import popper from "cytoscape-popper";
-// import Tippy from "@tippyjs/react";
+import Tippy from "@tippyjs/react";
 import tippy from "tippy.js";
 import "tippy.js/dist/tippy.css"; // optional
 import PopUpModal from "./PopUpModal";
+import { Editor, EditorState } from "draft-js";
+import "draft-js/dist/Draft.css";
+import "react-tippy/dist/tippy.css";
+import { Tooltip, withTooltip } from "react-tippy";
 
 cytoscape.use(popper);
 cytoscape.use(dagre);
 cytoscape.use(cxtmenu);
 
 const DiscourceGraph = () => {
+  const [node, setNode] = useState("");
   const cyRef = useRef(null);
   const [elements, setElements] = useState([
     {
@@ -155,9 +160,7 @@ const DiscourceGraph = () => {
         {
           content: "Edit",
           select: (node) => {
-            console.log(node.data().id);
             console.log(node.data());
-            console.log(node);
             console.log("================");
             setModalInfo({ status: true, node: node.data() });
           },
@@ -226,6 +229,8 @@ const DiscourceGraph = () => {
     let tippyDiv;
     cy.on("mouseover", "node", (event) => {
       let node = event.target;
+      console.log(node.data())
+      setNode(node)
       // used only for positioning
       let ref = node.popperRef();
       let dummyDomEle = document.createElement("div");
@@ -236,12 +241,15 @@ const DiscourceGraph = () => {
         getReferenceClientRect: ref.getBoundingClientRect,
         trigger: "manual",
         content: () => createContent(node),
+        // content: () => createContentfromHTML(),
+        // content: '<p><em>some text</em>Title<br></p>',
         arrow: true,
         placement: "bottom",
         hideOnClick: true,
         multiple: true,
         sticky: true,
         theme: "tomato",
+        allowHTML: true
       });
 
       tippyDiv.show();
@@ -336,7 +344,16 @@ const DiscourceGraph = () => {
     let layout = cyRef.current.layout({ name: "dagre", rankDir: "BT" });
     layout.run();
   };
-
+  // const createContentfromHTML = () => {
+  //   let div = document.createElement("div");
+  //   `
+  //       <div>
+  //       <h2>Title</h2>
+  //       <i>some text</i>
+  //     </div>
+  //   `
+  // }
+  // To fix it with a better solution
   const createContent = (node) => {
     let div = document.createElement("div");
     let authorDiv = document.createElement("div");
@@ -361,17 +378,18 @@ const DiscourceGraph = () => {
       id,
       label,
       likes,
-      text,
+      // text,
       type,
     } = node.data();
-
+let text = '<p><em>some text</em>Title<br></p>'
     authorDiv.textContent = `Author: ${author}`;
     dateDiv.textContent = `Date: ${date}`;
     dislikesDiv.textContent = `Dislikes: ${dislikes}`;
     idDiv.textContent = `ID: ${id}`;
     labelDiv.textContent = `Label: ${label}`;
     likesDiv.textContent = `Likes: ${likes}`;
-    textDiv.textContent = `Text: ${text}`;
+    // textDiv.textContent = `Text: ${text}`;
+    textDiv.innerHTML = `Text: ${text}`;
     typeDiv.textContent = `Type: ${type}`;
     // div.appendChild(authorDiv);
     // div.appendChild(dateDiv);
@@ -395,14 +413,17 @@ const DiscourceGraph = () => {
   };
 
   const closeModal = (node) => {
+    console.log(node);
     setModalInfo({ status: false, node: {} });
 
     // let temp = cyRef.current.filter('node[id="' + node.id + '"]');
     // temp.data("label", node.label);
-    
-    cyRef.current.filter('node[id="' + node.id + '"]').data({label: node.label, text: node.text});
-    
-    // saveGraph();
+
+    // Fix it: If you remove one of the data the update still happening(?!)
+    // cyRef.current
+    //   .filter('node[id="' + node.id + '"]')
+    //   .data({ text: node.text });
+    cyRef.current.data({});
   };
 
   return (
@@ -416,6 +437,9 @@ const DiscourceGraph = () => {
         stylesheet={stylesheet}
         cy={(cy) => (cyRef.current = cy)}
       />
+      <Tippy content={<span>Tooltip</span>}>
+      <button>My button</button>
+    </Tippy>
       {elements.map((ele, idx) => (
         <div key={idx}>{ele.data.id}</div>
       ))}
@@ -424,8 +448,19 @@ const DiscourceGraph = () => {
         closeModal={closeModal}
         node={modalInfo.node}
       />
+      {console.log(node)}
     </div>
   );
 };
 
 export default DiscourceGraph;
+
+
+// <Tooltip
+// // options
+// title="Welcome to React"
+// position="bottom"
+// trigger="click"
+// >
+// <p>Click here to show popup</p>
+// </Tooltip>

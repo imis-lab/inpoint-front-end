@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
+import MyEditor from "./Editor";
 
 // Accessibility when using Modal
 // Warning: react-modal: App element is not defined.
@@ -9,7 +10,6 @@ import Modal from "react-modal";
 Modal.setAppElement(document.querySelector("#root"));
 
 const PopUpModal = ({ modalInfo, closeModal, node }) => {
-
   const handleChange = (e) => {
     if (e.target.name == "text_edit") {
       node.text = e.target.value;
@@ -17,10 +17,12 @@ const PopUpModal = ({ modalInfo, closeModal, node }) => {
       node.label = e.target.value;
     }
   };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     closeModal(node);
   };
+
   return (
     <Modal
       isOpen={modalInfo}
@@ -35,6 +37,7 @@ const PopUpModal = ({ modalInfo, closeModal, node }) => {
         <div>Author: {node.author}</div>
         <div>
           Label:
+          <MyEditor node={node}/>
           <input
             type="text"
             placeholder={node.label}

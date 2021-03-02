@@ -1,6 +1,5 @@
-import logo from "./logo.svg";
-import "./App.css";
-import DiscourceGraph from  "./components/discourceGraph_react_component"
+import React from "react";
+import DiscourceGraph from "./discourceGraph_react_component"
 
 function App() {
   return (
