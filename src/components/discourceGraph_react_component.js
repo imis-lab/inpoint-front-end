@@ -153,6 +153,12 @@ const DiscourceGraph = () => {
   const [modalInfo, setModalInfo] = useState({ status: false, node: {} });
 
   useEffect(() => {
+    fetch("/api/discourses/ids")
+    .then(res => res.json())
+    .then(result => {
+      console.log(result);
+    }).catch(error => console.log(error));
+
     const cy = cyRef.current;
     cy.cxtmenu({
       selector: "node",
